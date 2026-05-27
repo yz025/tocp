@@ -65,7 +65,7 @@ func run(cmd *cli.Command, isPush bool) error {
 		log.Println()
 	}
 
-	fmt.Printf("\033[32m%d succeeded\033[0m, \033[31m%d failed\033[0m\n", succeeded, failed)
+	log.Printf("\033[32m%d succeeded\033[0m, \033[31m%d failed\033[0m\n", succeeded, failed)
 
 	return nil
 }
