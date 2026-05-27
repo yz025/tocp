@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -38,6 +40,15 @@ func LoadConfig(givenPath string) (*Config, error) {
 	if err := toml.Unmarshal(data, &config); err != nil {
 		return nil, fmt.Errorf("Failed to parse the config: %w", err)
 	}
+
+	if config.Log {
+		log.SetFlags(0)
+		log.SetOutput(os.Stdout)
+	} else {
+		log.SetOutput(io.Discard)
+	}
+
+	log.Printf("Found config: %q\n\n", path)
 
 	for i, _ := range config.Pairs {
 		if config.Pairs[i].RemoveBeforeCopy == nil {

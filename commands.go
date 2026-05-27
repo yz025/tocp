@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io"
 	"log"
 	"os"
 
@@ -54,13 +53,6 @@ func run(cmd *cli.Command, isPush bool) error {
 		return err
 	}
 
-	if config.Log {
-		log.SetFlags(0)
-		log.SetOutput(os.Stdout)
-	} else {
-		log.SetOutput(io.Discard)
-	}
-
 	succeeded := 0
 	failed := 0
 	for _, pair := range config.Pairs {
@@ -97,24 +89,24 @@ func update(pair Pair, isPush bool) bool {
 
 	_, err := os.Stat(from)
 	if err != nil {
-		log.Printf("\033[31mX\033[0m Failed to find %s\n", from)
+		log.Printf("\033[31mX\033[0m Failed to find %s %q\n", fromStr, from)
 		return false
 	}
 
 	if *pair.RemoveBeforeCopy {
 		if err := os.RemoveAll(to); err != nil {
-			log.Printf("\033[31mX\033[0m Failed to remove %s %s / %s\n", toStr, to, err)
+			log.Printf("\033[31mX\033[0m Failed to remove %s %q / %s\n", toStr, to, err)
 			return false
 		} else {
-			log.Printf("\033[32mO\033[0m Removed %s %s\n", toStr, to)
+			log.Printf("\033[32mO\033[0m Removed %s %q\n", toStr, to)
 		}
 	}
 
 	if err := cp.Copy(from, to); err != nil {
-		log.Printf("\033[31mX\033[0m Failed to copy %s %s -> %s %s / %s\n", fromStr, from, toStr, to, err)
+		log.Printf("\033[31mX\033[0m Failed to copy %s %q -> %s %q / %s\n", fromStr, from, toStr, to, err)
 		return false
 	} else {
-		log.Printf("\033[32mO\033[0m Copied %s %s -> %s %s\n", fromStr, from, toStr, to)
+		log.Printf("\033[32mO\033[0m Copied %s %q -> %s %q\n", fromStr, from, toStr, to)
 	}
 	return true
 }
