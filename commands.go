@@ -55,39 +55,66 @@ func run(cmd *cli.Command, isPush bool) error {
 	}
 
 	if config.Log {
+		log.SetFlags(0)
 		log.SetOutput(os.Stdout)
 	} else {
 		log.SetOutput(io.Discard)
 	}
 
+	succeeded := 0
+	failed := 0
 	for _, pair := range config.Pairs {
-		src := os.Expand(pair.Src, os.Getenv)
-		dst := os.Expand(pair.Dst, os.Getenv)
-
-		if isPush {
-			update(src, dst)
+		if update(pair, isPush) {
+			succeeded += 1
 		} else {
-			update(dst, src)
+			failed += 1
 		}
+
+		log.Println()
 	}
+
+	fmt.Printf("\033[32m%d succeeded\033[0m, \033[31m%d failed\033[0m\n", succeeded, failed)
+
 	return nil
 }
-func update(src string, dst string) {
-	_, err := os.Stat(src)
-	if err != nil {
-		log.Printf("WARN: %s NOT FOUND\n", src)
-		return
-	}
+func update(pair Pair, isPush bool) bool {
+	var from, fromStr string
+	var to, toStr string
 
-	if err := os.RemoveAll(dst); err != nil {
-		log.Printf("ERR: FAILED TO REMOVE %s / %s\n", dst, err)
+	if isPush {
+		from = os.Expand(pair.Src, os.Getenv)
+		fromStr = "src"
+
+		to = os.Expand(pair.Dst, os.Getenv)
+		toStr = "dst"
 	} else {
-		log.Printf("LOG: REMOVED %s\n", dst)
+		from = os.Expand(pair.Dst, os.Getenv)
+		fromStr = "dst"
+
+		to = os.Expand(pair.Src, os.Getenv)
+		toStr = "src"
 	}
 
-	if err := cp.Copy(src, dst); err != nil {
-		log.Printf("ERR: FAILED TO COPY %s TO %s / %s\n", src, dst, err)
-		return
+	_, err := os.Stat(from)
+	if err != nil {
+		log.Printf("\033[31mX\033[0m Failed to find %s\n", from)
+		return false
 	}
-	log.Printf("LOG: COPIED %s TO %s\n", src, dst)
+
+	if *pair.RemoveBeforeCopy {
+		if err := os.RemoveAll(to); err != nil {
+			log.Printf("\033[31mX\033[0m Failed to remove %s %s / %s\n", toStr, to, err)
+			return false
+		} else {
+			log.Printf("\033[32mO\033[0m Removed %s %s\n", toStr, to)
+		}
+	}
+
+	if err := cp.Copy(from, to); err != nil {
+		log.Printf("\033[31mX\033[0m Failed to copy %s %s -> %s %s / %s\n", fromStr, from, toStr, to, err)
+		return false
+	} else {
+		log.Printf("\033[32mO\033[0m Copied %s %s -> %s %s\n", fromStr, from, toStr, to)
+	}
+	return true
 }

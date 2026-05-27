@@ -15,8 +15,9 @@ type Config struct {
 	RemoveBeforeCopy bool   `toml:"remove_before_copy"`
 }
 type Pair struct {
-	Src string `toml:"src"`
-	Dst string `toml:"dst"`
+	Src              string `toml:"src"`
+	Dst              string `toml:"dst"`
+	RemoveBeforeCopy *bool  `toml:"remove_before_copy"`
 }
 
 func LoadConfig(givenPath string) (*Config, error) {
@@ -36,6 +37,13 @@ func LoadConfig(givenPath string) (*Config, error) {
 	}
 	if err := toml.Unmarshal(data, &config); err != nil {
 		return nil, fmt.Errorf("Failed to parse the config: %w", err)
+	}
+
+	for i, _ := range config.Pairs {
+		if config.Pairs[i].RemoveBeforeCopy == nil {
+			config.Pairs[i].RemoveBeforeCopy = new(bool)
+			*config.Pairs[i].RemoveBeforeCopy = config.RemoveBeforeCopy
+		}
 	}
 
 	return &config, nil
@@ -88,7 +96,11 @@ func checkLocalConfig() (string, bool) {
 func checkGlobalConfig() (string, bool) {
 	home := os.Getenv("TOCP_CONFIG_HOME")
 	if home == "" {
-		return "", false
+		var err error
+		home, err = os.UserConfigDir()
+		if err != nil {
+			return "", false
+		}
 	}
 
 	globalConfig := filepath.Join(home, "tocp.toml")
