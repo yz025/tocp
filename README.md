@@ -9,7 +9,8 @@ tocp allows you to define copy pairs in a simple TOML config and easily sync the
 On the way T.T
 ```
 ### Manual Installation
-Download the latest release from [GitHub Releases](https://github.com/yz025/tocp/releases).
+- Download the latest release from [GitHub Releases](https://github.com/yz025/tocp/releases).
+- Clone the repo and build by yourself. You need [Go compiler](https://go.dev/dl/).
 
 ## Quick Start
 Create a `tocp.toml` file:
@@ -53,4 +54,5 @@ tocp searches for `tocp.toml` in the following order and first found is used.
 - I'm using this for [my dotfiles](https://github.com/yz025/dotfiles).
 ## Todo
 - [ ] Improve `--help`.
+- [ ] Release for other architectures.
 - [ ] Release on mise.
