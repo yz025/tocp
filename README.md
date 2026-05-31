@@ -1,5 +1,56 @@
 # tocp
-The app works.
-- [ ] Documentation
-- [ ] Release
-- [ ] Support for mise
+**TOML Copy** is a CLI tool for managing file/directory synchronization using TOML config files.
+
+tocp allows you to define copy pairs in a simple TOML config and easily sync them with two commands, `push` and `pull`.
+
+## Installation
+### Using mise
+```
+On the way T.T
+```
+### Manual Installation
+Download the latest release from [GitHub Releases](https://github.com/yz025/tocp/releases).
+
+## Quick Start
+Create a `tocp.toml` file:
+
+```
+log = false # default value is true
+remove_before_copy = true # default value is true
+
+[[pairs]]
+src = "$HOME/.config/nvim" # you can use environment variable, but not tilde(~).
+dst = "$DOTFILES/nvim"
+# since this pair lack of remove_before_copy, it uses the global value
+
+[[pairs]]
+src = "$HOME/Videos/Screencasts"
+dst = "$CLIPS"
+remove_before_copy = false
+```
+Then run:
+```
+# Copy from src to dst
+tocp push
+
+# Copy from dst to src
+tocp pull
+```
+## Configuration
+tocp searches for `tocp.toml` in the following order and first found is used.
+1. Explicit path via `--path` or `-p` flag `tocp push -p custom/path/to/tocp.toml`
+2. Current working directory `./tocp.toml`
+3. Environment variable `$TOCP_CONFIG_HOME/tocp.toml`
+4. Global config directory
+    - Linux: `~./config/tocp.toml`
+    - Windows: `%APPDATA%/tocp.toml`
+## Behaviour
+- It will shutdown with an error if it fails to find a config file.
+- It will continue to process other pairs even when it fails with some pairs.
+- It will log completely nothing if you set `log = false`. 
+## Notes
+- Not tested on Windows yet
+- I'm using this for [my dotfiles](https://github.com/yz025/dotfiles).
+## Todo
+- [ ] Improve `--help`.
+- [ ] Release on mise.
