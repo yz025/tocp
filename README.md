@@ -12,7 +12,7 @@ On the way T.T
 - Download the latest release from [GitHub Releases](https://github.com/yz025/tocp/releases).
 - Clone the repo and build by yourself. You need [Go compiler](https://go.dev/dl/).
 
-## Quick Start
+## Usage
 Create a `tocp.toml` file:
 
 ```
@@ -25,33 +25,38 @@ dst = "$DOTFILES/nvim"
 # since this pair lack of remove_before_copy, it uses the global value
 
 [[pairs]]
+src = "$HOME/.bashrc"
+dst = "$DOTFILES/.bashrc"
+# for a single file, the old file will be replaced even when remove_before_copy = false.
+
+[[pairs]]
 src = "$HOME/Videos/Screencasts"
 dst = "$CLIPS"
 remove_before_copy = false
 ```
 Then run:
 ```
-# Copy from src to dst
+# Copy src to dst
 tocp push
 
-# Copy from dst to src
+# Copy dst to src
 tocp pull
 ```
 ## Configuration
 tocp searches for `tocp.toml` in the following order and first found is used.
 1. Explicit path via `--path` or `-p` flag `tocp push -p custom/path/to/tocp.toml`
 2. Current working directory `./tocp.toml`
-3. Environment variable `$TOCP_CONFIG_HOME/tocp.toml`
+3. Custom config directory `$TOCP_CONFIG_HOME/tocp.toml`
 4. Global config directory
-    - Linux: `~./config/tocp.toml`
-    - Windows: `%APPDATA%/tocp.toml`
+    - Linux: `~/.config/tocp.toml`
+    - Windows: `%APPDATA%\tocp.toml`
 ## Behaviour
 - It will shutdown with an error if it fails to find a config file.
 - It will continue to process other pairs even when it fails with some pairs.
 - It will log completely nothing if you set `log = false`. 
 ## Notes
-- Not tested on Windows yet
-- I'm using this for [my dotfiles](https://github.com/yz025/dotfiles).
+- Not tested on Windows yet.
+- Check more examples on [my dotfiles](https://github.com/yz025/dotfiles).
 ## Todo
 - [ ] Improve `--help`.
 - [ ] Release for other architectures.
