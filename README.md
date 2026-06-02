@@ -3,14 +3,12 @@
 
 tocp allows you to define copy pairs in a simple TOML config and easily sync them with two commands, `push` and `pull`.
 
+Requires Go 1.26 or higher.
+
 ## Installation
-### Using mise
 ```
-On the way T.T
+go install github.com/yz025/tocp@latest
 ```
-### Manual Installation
-- Download the latest release from [GitHub Releases](https://github.com/yz025/tocp/releases).
-- Clone the repo and build by yourself. You need [Go compiler](https://go.dev/dl/).
 
 ## Usage
 Create a `tocp.toml` file:
@@ -44,7 +42,7 @@ tocp pull
 ```
 ## Configuration
 tocp searches for `tocp.toml` in the following order and first found is used.
-1. Explicit path via `--path` or `-p` flag `tocp push -p custom/path/to/tocp.toml`
+1. Explicit path via `--path` or `-p` flag `tocp push -p path/to/tocp.toml`
 2. Current working directory `./tocp.toml`
 3. Custom config directory `$TOCP_CONFIG_HOME/tocp.toml`
 4. Global config directory
@@ -59,5 +57,3 @@ tocp searches for `tocp.toml` in the following order and first found is used.
 - Check more examples on [my dotfiles](https://github.com/yz025/dotfiles).
 ## Todo
 - [ ] Improve `--help`.
-- [ ] Release for other architectures.
-- [ ] Release on mise.
