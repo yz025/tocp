@@ -50,7 +50,7 @@ tocp searches for `tocp.toml` in the following order and first found is used.
     - Windows: `%APPDATA%\tocp.toml`
 ## Behaviour
 - It will shutdown with an error if it fails to find a config file.
-- It will continue to process other pairs even when it fails with some pairs.
+- It will continue to process other pairs even if it fails with some pairs.
 - It will log completely nothing if you set `log = false`. 
 ## Notes
 - Not tested on Windows yet.
