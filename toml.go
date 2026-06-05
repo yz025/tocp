@@ -38,7 +38,7 @@ func LoadConfig(givenPath string) (*Config, error) {
 		RemoveBeforeCopy: true,
 	}
 	if err := toml.Unmarshal(data, &config); err != nil {
-		return nil, fmt.Errorf("Failed to parse the config: %w", err)
+		return nil, fmt.Errorf("Failed to parse the config %q: %w", path, err)
 	}
 
 	if config.Log {
@@ -80,16 +80,16 @@ func checkGivenConfig(pathFlag string) (string, bool) {
 		return "", false
 	}
 
-	abs, err := filepath.Abs(pathFlag)
+	givenConfig, err := filepath.Abs(pathFlag)
 	if err != nil {
 		return "", false
 	}
 
-	if _, err := os.Stat(abs); err != nil {
+	if _, err := os.Stat(givenConfig); err != nil {
 		return "", false
 	}
 
-	return pathFlag, true
+	return givenConfig, true
 }
 func checkLocalConfig() (string, bool) {
 	cwd, err := os.Getwd()
