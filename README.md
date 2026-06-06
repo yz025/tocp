@@ -53,5 +53,5 @@ tocp searches for `tocp.toml` in the following order and first found is used.
 - It will continue to process other pairs even if it fails with some pairs.
 - It will log completely nothing if you set `log = false`.
 ## Notes
-- Not tested on Windows and Mac yet.
+- Not tested on Windows and MacOS yet.
 - Check more examples on [my dotfiles](https://github.com/yz025/dotfiles).
