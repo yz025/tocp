@@ -42,7 +42,6 @@ func LoadConfig(givenPath string) (*Config, error) {
 	}
 
 	if config.Log {
-		log.SetFlags(0)
 		log.SetOutput(os.Stdout)
 	} else {
 		log.SetOutput(io.Discard)
@@ -75,13 +74,8 @@ func findConfig(pathFlag string) (string, bool) {
 
 	return "", false
 }
-func checkGivenConfig(pathFlag string) (string, bool) {
-	if pathFlag == "" {
-		return "", false
-	}
-
-	givenConfig, err := filepath.Abs(pathFlag)
-	if err != nil {
+func checkGivenConfig(givenConfig string) (string, bool) {
+	if givenConfig == "" {
 		return "", false
 	}
 

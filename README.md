@@ -51,9 +51,7 @@ tocp searches for `tocp.toml` in the following order and first found is used.
 ## Behaviour
 - It will shutdown with an error if it fails to find a config file.
 - It will continue to process other pairs even if it fails with some pairs.
-- It will log completely nothing if you set `log = false`. 
+- It will log completely nothing if you set `log = false`.
 ## Notes
-- Not tested on Windows yet.
+- Not tested on Windows and Mac yet.
 - Check more examples on [my dotfiles](https://github.com/yz025/dotfiles).
-## Todo
-- [ ] Improve `--help`.

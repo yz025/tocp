@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -11,13 +10,15 @@ import (
 )
 
 func RunTOCP() {
+	log.SetFlags(0)
+
 	cmd := &cli.Command{
 		Name:  "tocp",
 		Usage: "TOML Copy Paste",
 		Commands: []*cli.Command{
 			{
 				Name:  "push",
-				Usage: "Copy src to `dst",
+				Usage: "Copy src to dst",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return run(cmd, true)
 				},
@@ -34,14 +35,14 @@ func RunTOCP() {
 			&cli.StringFlag{
 				Name:     "path",
 				Aliases:  []string{"p"},
-				Usage:    "Path to a tocp.toml",
+				Usage:    "path to a tocp.toml",
 				Required: false,
 			},
 		},
 	}
 
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		logError(err)
 		os.Exit(1)
 	}
 }
@@ -54,13 +55,13 @@ func run(cmd *cli.Command, isPush bool) error {
 	}
 
 	succeeded := 0
-	for pair := range config.Pairs {
+	for _, pair := range config.Pairs {
 		if update(pair, isPush) {
 			succeeded += 1
 		}
 	}
 	log.Printf("%d/%d succeeded.", succeeded, len(config.Pairs))
-	
+
 	return nil
 }
 func update(pair Pair, isPush bool) bool {
@@ -84,6 +85,7 @@ func update(pair Pair, isPush bool) bool {
 	_, err := os.Stat(from)
 	if err != nil {
 		logFailuref(err, "Failed to find %s %q.", fromStr, from)
+		log.Println()
 		return false
 	}
 
@@ -106,8 +108,11 @@ func update(pair Pair, isPush bool) bool {
 	}
 
 	log.Println()
-	
+
 	return true
+}
+func logError(err error) {
+	log.Printf("\x1b[31mError\x1b[0m: %v", err)
 }
 func logSuccessf(format string, v ...any) {
 	str := "\x1b[32mO\x1b[0m " + format
@@ -116,5 +121,5 @@ func logSuccessf(format string, v ...any) {
 func logFailuref(err error, format string, v ...any) {
 	str := "\x1b[31mX\x1b[0m " + format
 	log.Printf(str, v...)
-	log.Printf("\x1b[31mError\x1b[0m: %v", err)
+	logError(err)
 }
