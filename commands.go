@@ -17,14 +17,14 @@ func RunTOCP() {
 		Commands: []*cli.Command{
 			{
 				Name:  "push",
-				Usage: "Copy `src` to `dst`.",
+				Usage: "Copy src to `dst",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return run(cmd, true)
 				},
 			},
 			{
 				Name:  "pull",
-				Usage: "Copy `dst` to `src`",
+				Usage: "Copy dst to src",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					return run(cmd, false)
 				},
@@ -83,24 +83,26 @@ func update(pair Pair, isPush bool) bool {
 
 	_, err := os.Stat(from)
 	if err != nil {
-		logFailuref("Failed to find %s %q.\nError: %v\n\n", fromStr, from, err)
+		logFailuref(err, "Failed to find %s %q.", fromStr, from)
 		return false
 	}
 
 	if *pair.RemoveBeforeCopy {
 		if err := os.RemoveAll(to); err != nil {
-			logFailuref("Failed to remove %s %q.\nError: %v\n\n", toStr, to, err)
+			logFailuref(err, "Failed to remove %s %q.", toStr, to)
+			log.Println()
 			return false
 		} else {
-			logSuccessf("Removed %s %q\n", toStr, to)
+			logSuccessf("Removed %s %q", toStr, to)
 		}
 	}
 
 	if err := cp.Copy(from, to); err != nil {
-		logFailuref("Failed to copy %s %q -> %s %q.\nError: %v\n\n", fromStr, from, toStr, to, err)
+		logFailuref(err, "Failed to copy %s %q -> %s %q.", fromStr, from, toStr, to)
+		log.Println()
 		return false
 	} else {
-		logSuccessf("Copied %s %q -> %s %q\n", fromStr, from, toStr, to)
+		logSuccessf("Copied %s %q -> %s %q", fromStr, from, toStr, to)
 	}
 
 	log.Println()
@@ -111,7 +113,8 @@ func logSuccessf(format string, v ...any) {
 	str := "\x1b[32mO\x1b[0m " + format
 	log.Printf(str, v...)
 }
-func logFailuref(format string, v ...any) {
+func logFailuref(err error, format string, v ...any) {
 	str := "\x1b[31mX\x1b[0m " + format
 	log.Printf(str, v...)
+	log.Printf("\x1b[31mError\x1b[0m: %v", err)
 }
