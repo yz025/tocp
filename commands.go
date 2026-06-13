@@ -59,6 +59,8 @@ func run(cmd *cli.Command, isPush bool) error {
 		if update(pair, isPush) {
 			succeeded += 1
 		}
+
+		log.Println()
 	}
 	log.Printf("%d/%d succeeded.", succeeded, len(config.Pairs))
 
@@ -85,14 +87,12 @@ func update(pair Pair, isPush bool) bool {
 	_, err := os.Stat(from)
 	if err != nil {
 		logFailuref(err, "Failed to find %s %q.", fromStr, from)
-		log.Println()
 		return false
 	}
 
 	if *pair.RemoveBeforeCopy {
 		if err := os.RemoveAll(to); err != nil {
 			logFailuref(err, "Failed to remove %s %q.", toStr, to)
-			log.Println()
 			return false
 		} else {
 			logSuccessf("Removed %s %q", toStr, to)
@@ -101,13 +101,10 @@ func update(pair Pair, isPush bool) bool {
 
 	if err := cp.Copy(from, to); err != nil {
 		logFailuref(err, "Failed to copy %s %q -> %s %q.", fromStr, from, toStr, to)
-		log.Println()
 		return false
 	} else {
 		logSuccessf("Copied %s %q -> %s %q", fromStr, from, toStr, to)
 	}
-
-	log.Println()
 
 	return true
 }
