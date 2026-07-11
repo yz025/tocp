@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"path/filepath"
 
 	cp "github.com/otiai10/copy"
 	"github.com/urfave/cli/v3"
@@ -71,16 +72,16 @@ func update(pair Pair, isPush bool) bool {
 	var to, toStr string
 
 	if isPush {
-		from = os.Expand(pair.Src, os.Getenv)
+		from = expandConfigPath(pair.Src)
 		fromStr = "src"
 
-		to = os.Expand(pair.Dst, os.Getenv)
+		to = expandConfigPath(pair.Dst)
 		toStr = "dst"
 	} else {
-		from = os.Expand(pair.Dst, os.Getenv)
+		from = expandConfigPath(pair.Dst)
 		fromStr = "dst"
 
-		to = os.Expand(pair.Src, os.Getenv)
+		to = expandConfigPath(pair.Src)
 		toStr = "src"
 	}
 
@@ -119,4 +120,19 @@ func logFailuref(err error, format string, v ...any) {
 	str := "\x1b[31mX\x1b[0m " + format
 	log.Printf(str, v...)
 	logError(err)
+}
+func expandConfigPath(input string) string {
+	path := os.Expand(input, func(str string) string {
+		switch input {
+		case "HOME":
+			if val := os.Getenv("HOME"); val != "" {
+				return val
+			}
+			if home, err := os.UserHomeDir(); err == nil {
+				return home
+			}
+		}
+		return os.Getenv(input)
+	})
+	return filepath.Clean(path)
 }
